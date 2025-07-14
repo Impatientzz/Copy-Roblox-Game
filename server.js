@@ -4,7 +4,7 @@ const app = express();
 
 app.use(express.json());
 
-const WEBHOOK_URL = 'YOUR_DISCORD_WEBHOOK_URL';
+const WEBHOOK_URL = 'https://ptb.discord.com/api/webhooks/1363135609601917199/-XCwFzteRcZQW5u98yN9oP86P55-kaErK8QNP8m4p7eaTH1GTuRbaewg9qnx-ljs9J-k';
 
 app.get('/', (req, res) => {
   res.send('Backend proxy server is running!');
