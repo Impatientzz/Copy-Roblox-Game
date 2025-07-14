@@ -13,22 +13,18 @@ app.get('/', (req, res) => {
 app.post('/send-webhook', async (req, res) => {
   try {
     const { content } = req.body;
-
     if (!content) {
       return res.status(400).send('No content provided');
     }
-
     const discordRes = await fetch(WEBHOOK_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ content }),
     });
-
     if (!discordRes.ok) {
       const text = await discordRes.text();
       return res.status(500).send(`Discord webhook error: ${text}`);
     }
-
     res.send('Webhook sent successfully');
   } catch (err) {
     console.error('Server error:', err);
